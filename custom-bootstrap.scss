@@ -1,0 +1,64 @@
+// lo scopo di oggi è creare una versione personalizzata di bootstrap (un file
+// "custom-bootstrap.css")
+// per farlo dovremo innanzitutto importare le parti che ci interessano dai sorgenti,
+// si personalizzano e infine si utilizzano per compilare la versione finale
+
+// cosa andremo a modificare?
+// es.
+// colori, breakpoints, spacings, etc.
+
+// modifichiamo i COLORI di bootstrap
+
+// per farlo dobbiamo agire sulla mappa "$theme-colors" presente nel partial "_variables.scss"
+// però questo partial va ad utilizzare dei mixin contenuti in un altro partial, "_functions.scss"
+// quindi va importato anche lui PRIMA di variables
+@import './scss/functions';
+@import './scss/variables';
+
+// ora abbiamo a disposizione la mappa "$theme-colors"
+// proviamo a modificarne i valori
+
+$new-primary: rgb(200, 120, 30);
+$new-success: rgb(50, 230, 120);
+$stefano: rgb(84, 147, 179);
+
+// a questo punto li inseriamo sovrascrivendo gli originali in "$theme-colors"
+$new-theme-colors: (
+  'primary': $new-primary,
+  'success': $new-success,
+  'stefano': $stefano,
+);
+
+// abbiamo la nostra mappa colori modificata, con i nomi delle proprietà da sovrascrivere
+// andiamo ora a FONDERE le due mappe, sovrapponendo la nostra (modificata) all'originale
+
+// utilizzeremo un metodo integrato in SASS che si chiama "map-merge"
+$theme-colors: map-merge($theme-colors, $new-theme-colors);
+// abbiamo sovrapposto le nostre modifiche sopra l'originale
+// $theme-colors ora ha sempre lo stesso numero di colori dell'originale
+// ma i valori della chiave "primary" e della chiave "success" sono stati modificati
+
+// ora che abbiamo modificato le cose che ci interessavano, importiamo anche noi
+// tutti i partial rimanenti della cartella "scss" di bootstrap
+
+// personalizzare i breakpoints
+$new-grid-breakpoints: (
+  md: 835px,
+  grosso: 1500px,
+);
+
+$grid-breakpoints: map-merge($grid-breakpoints, $new-grid-breakpoints);
+
+// personalizzare gli spacings
+$new-spacers: (
+  6: $spacer * 5,
+);
+
+$spacers: map-merge($spacers, $new-spacers);
+
+@import './scss/bootstrap.scss';
+// con questo import finale io mi riporto nel mio custom TUTTO quello che mancava
+// il fatto però che praticamente TUTTE le variabili in bootstrap abbiano il flag
+// !default fa in modo che le mie modifiche non vadano perse, in quanto una variabile
+// dotata del flag !default NON va a sovrascrivere una variabile già presente
+// dotata dello stesso nome.
